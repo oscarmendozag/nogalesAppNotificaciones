@@ -11,6 +11,7 @@ import { Platform, StyleSheet, Text, View } from 'react-native';
 import  AppContainer  from './src/navigation/MainNavigator';
 export default class App extends Component {
   render() {
+    console.log('PRUEBA')
     return (
       <AppContainer/>
     );
