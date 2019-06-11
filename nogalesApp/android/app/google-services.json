@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "235008508187",
+    "firebase_url": "https://nogalesapp-1.firebaseio.com",
+    "project_id": "nogalesapp-1",
+    "storage_bucket": "nogalesapp-1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:235008508187:android:6698e3709aad044e",
+        "android_client_info": {
+          "package_name": "com.nogalesapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "235008508187-kjd7q20p67m7uc7g2bgdv40u857lhvfh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1AMVFKnKQG8olNcJnGtkcMUegPUIGbZA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "235008508187-kjd7q20p67m7uc7g2bgdv40u857lhvfh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:235008508187:android:d4082777eab13bfd",
+        "android_client_info": {
+          "package_name": "com.nogalesbus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "235008508187-kjd7q20p67m7uc7g2bgdv40u857lhvfh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1AMVFKnKQG8olNcJnGtkcMUegPUIGbZA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "235008508187-kjd7q20p67m7uc7g2bgdv40u857lhvfh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
