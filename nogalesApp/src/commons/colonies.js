@@ -1,5 +1,5 @@
 export const colonies = [
     {topic: '2000', name: '2000'},
-    { topic: 'GIO', name:'La colonia del Gio'},
-    { topic: 'GIO2', name:'La colonia del Gio2'}
+    { topic: '30_mayo', name:'30 de Mayo'},
+    { topic: '7_enero', name:'7 de Enero'},
 ]
