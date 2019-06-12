@@ -1,15 +1,18 @@
 //import liraries
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
-import { colors } from '../commons/colors';
+import { View, Text, StyleSheet, Button, Modal } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import firebase from 'react-native-firebase';
+import { getColonie } from '../commons';
+import { Colonies } from './colonie';
 
 // create a component
 class Home extends Component {
 
     state = {
-        busLocation: null
+        busLocation: null,
+        showInitialConfiguration: false,
+        starting: true 
     }
 
     onDocUpdate = (querySnapshot) => {
@@ -20,14 +23,42 @@ class Home extends Component {
     }
 
     componentDidMount() {
-        this.firebaseRef = firebase.firestore().collection('zones').doc('sMhGAj5dyvZ7pFRORl4t');
-        this.unsubscribe = this.firebaseRef.onSnapshot(this.onDocUpdate);
+        //this.firebaseRef = firebase.firestore().collection('zones').doc('sMhGAj5dyvZ7pFRORl4t');
+        //this.unsubscribe = this.firebaseRef.onSnapshot(this.onDocUpdate);
+        getColonie().then(
+            value =>{
+                if (value === null){
+                    this.setState({showInitialConfiguration: true});
+                }
+            }
+        ).finally(
+            onfinally => {
+                this.setState({starting: false})
+            }
+        )
     }
 
     componentWillUnmount() {
-        this.unsubscribe();
+        //this.unsubscribe();
     }
+
     render() {
+        if( this.state.starting) {
+            return (
+                <Text>Hi</Text>
+            )
+        } else{
+            if (this.state.showInitialConfiguration){
+                return <Modal visible = {this.state.showInitialConfiguration}>
+                    <View style={{flex:1}}>
+                        <Colonies onSetted={() => {
+                            this.setState({showInitialConfiguration: false})
+                        }}></Colonies>
+                    </View>
+                </Modal>
+                 
+            }
+        }
         return (
             <View style={styles.container}>
                 <MapView

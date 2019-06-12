@@ -19,6 +19,7 @@ class Settings extends Component {
             this.removeNotificationListener();
     }
 
+    
     render() {
         return (
             <View style={styles.container}>
