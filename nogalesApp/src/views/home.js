@@ -5,6 +5,8 @@ import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import firebase from 'react-native-firebase';
 import { getColonie } from '../commons';
 import { Colonies } from './colonie';
+import busIcon from '../assets/bus.png';
+import { Spinner } from 'native-base';
 
 // create a component
 class Home extends Component {
@@ -12,51 +14,95 @@ class Home extends Component {
     state = {
         busLocation: null,
         showInitialConfiguration: false,
-        starting: true 
+        starting: true,
+        colonie: '',
+        fetching: false
     }
 
     onDocUpdate = (querySnapshot) => {
-        const { currentPosition } = querySnapshot.data();
-        const latitude = currentPosition._latitude;
-        const longitude = currentPosition._longitude;
-        this.setState({ busLocation: { latitude, longitude } });
+        const { latitud, longitud } = querySnapshot.data();
+        this.setState({ busLocation: { latitude: latitud, longitude:longitud } });
     }
 
     componentDidMount() {
         //this.firebaseRef = firebase.firestore().collection('zones').doc('sMhGAj5dyvZ7pFRORl4t');
         //this.unsubscribe = this.firebaseRef.onSnapshot(this.onDocUpdate);
         getColonie().then(
-            value =>{
-                if (value === null){
-                    this.setState({showInitialConfiguration: true});
+            value => {
+                if (value === null) {
+                    this.setState({ showInitialConfiguration: true });
+                } else {
+                    this.setState({ colonie: value });
+                    this.startTracking();
                 }
             }
         ).finally(
             onfinally => {
-                this.setState({starting: false})
+                this.setState({ starting: false })
             }
-        )
+        );
+    }
+
+    startTracking() {
+        if (!this.state.showInitialConfiguration && this.state.colonie) {
+            this.setState({fetching: true});
+            this.collectionRef = firebase.firestore().collection('zones').where('colonies', 'array-contains', this.state.colonie).get().then(
+                collection => {
+                    collection.forEach(
+                        document => {
+                            this.unsubscribe = document.ref.onSnapshot(this.onDocUpdate);
+                            this.setState({fetching: false})
+                        }
+                    )
+                }
+            ).catch(
+                err => {
+                    this.setState({fetching: false})
+                }
+            )
+        }
     }
 
     componentWillUnmount() {
-        //this.unsubscribe();
+        this.setState({showInitialConfiguration: false})
+        this.unsubscribe();
     }
 
     render() {
-        if( this.state.starting) {
+        if (this.state.starting) {
             return (
-                <Text>Hi</Text>
+                <View style={styles.container}>
+                    <Spinner></Spinner>
+                    <Text>{this.state.fetching ?'Buscando si ha salido autobús':'Comprobando configuración' } </Text>
+                </View>
             )
-        } else{
-            if (this.state.showInitialConfiguration){
-                return <Modal visible = {this.state.showInitialConfiguration}>
-                    <View style={{flex:1}}>
+        } else {
+            if (this.state.showInitialConfiguration) {
+                return <Modal visible={this.state.showInitialConfiguration}>
+                    <View style={{ flex: 1 }}>
                         <Colonies onSetted={() => {
-                            this.setState({showInitialConfiguration: false})
+                            this.setState({ showInitialConfiguration: false });
+                            this.startTracking();
+                            alert('Ahora recibirás notificaciones.')
                         }}></Colonies>
                     </View>
                 </Modal>
-                 
+
+            }
+            if(this.state.fetching){
+                return(
+                    <View style={styles.container}>
+                    <Spinner></Spinner>
+                    <Text>Buscando si ha salido autobús</Text>
+                </View>
+                )
+            }
+            if (!this.state.busLocation){
+                return <View>
+                    <Text>
+                        Autobus no pasa por su colonia, sorry
+                    </Text>
+                </View>
             }
         }
         return (
@@ -65,17 +111,20 @@ class Home extends Component {
                     showsUserLocation={true}
                     provider={PROVIDER_GOOGLE} // remove if not using Google Maps
                     style={styles.map}
-                    //18.8157483,-97.1640488
+                    ref = {ref => this.map = ref}
                     initialRegion={{
                         latitude: 18.8157483,
                         longitude: -97.1640488,
                         latitudeDelta: 0.015,
                         longitudeDelta: 0.0121,
                     }}
+
                 >
-                    {this.state.busLocation ? <Marker coordinate={this.state.busLocation}></Marker> : null}
+                    {this.state.busLocation ? <Marker image={busIcon} coordinate={this.state.busLocation}></Marker> : null}
                 </MapView>
-                <Button title='Ubícame'></Button>
+                <Button onPress={() => {
+                    this.map.fitToCoordinates([this.state.busLocation])
+                }} title='Ubícame'></Button>
             </View>
         );
     }
