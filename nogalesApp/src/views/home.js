@@ -55,7 +55,7 @@ class Home extends Component {
             }
         ).finally(
                 onfinally => {
-                    this.setState({ starting: false })
+                    this.setState({ starting: false, fetching: false })
             }
         );
     }
