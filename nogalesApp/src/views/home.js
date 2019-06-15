@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Button, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import firebase from 'react-native-firebase';
 import { getColonie } from '../commons';
@@ -11,12 +11,18 @@ import { Spinner, Icon } from 'native-base';
 // create a component
 class Home extends Component {
 
-    state = {
-        busLocation: null,
-        showInitialConfiguration: false,
-        starting: true,
-        colonie: '',
-        fetching: false
+    constructor(props) {
+        super(props);
+        this.state = {
+            busLocation: null,
+            showInitialConfiguration: false,
+            starting: true,
+            colonie: '',
+            fetching: false,
+            marginTop: 4,
+        };
+        this.mapLoaded = 0;
+        this.changeTop = this.changeTop.bind(this);
     }
 
     onDocUpdate = (querySnapshot) => {
@@ -30,10 +36,12 @@ class Home extends Component {
         this.startTracking();
     }
 
+    changeTop(){
+        this.setState({marginTop: 0})
+    }
     startTracking() {
         getColonie().then(
             value => {
-                alert(value);
                 if (value === null) {
                     this.setState({ showInitialConfiguration: true });
                 } else {
@@ -96,16 +104,22 @@ class Home extends Component {
                 )
             }
             if (!this.state.busLocation) {
-                return <View style={{justifyContent: 'center', flex: 1, alignItems:'center'}}>
+                return <View style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
                     <Text>
                         Autobús no ha salido hacia su colonia, Consulte el calendario o en el apartado de notificaciones.
                     </Text>
-                    <Icon name='ios-refresh' onPress={() => { this.startTracking();}}></Icon>
+                    <Icon name='ios-refresh' onPress={() => { this.startTracking(); }}></Icon>
                 </View>
             }
         }
+
+
+        if (this.mapLoaded === 0) {
+            setTimeout(()=>this.setState({marginTop:0}), 1000)
+        }
+        this.mapLoaded++;
         return (
-            <View style={styles.container}>
+            <View style={[styles.container, { marginTop: this.state.marginTop }]}>
                 <MapView
                     showsUserLocation={true}
                     provider={PROVIDER_GOOGLE} // remove if not using Google Maps
@@ -117,13 +131,21 @@ class Home extends Component {
                         latitudeDelta: 0.015,
                         longitudeDelta: 0.0121,
                     }}
-
                 >
                     {this.state.busLocation ? <Marker image={busIcon} coordinate={this.state.busLocation}></Marker> : null}
                 </MapView>
-                <Button onPress={() => {
-                    this.map.fitToCoordinates([this.state.busLocation])
-                }} title='Ubícame'></Button>
+                <View style={{ position: 'absolute', top: 10, width: '100%', paddingHorizontal: 10 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <TouchableOpacity style={{ backgroundColor: 'rgba(255,255,255,.5)', padding: 5, elevation: 1, alignItems: 'center', flexDirection: 'row' }} onPress={() => {
+                            this.map.fitToCoordinates([this.state.busLocation])
+                        }}>
+                            <Icon name='ios-bus' />
+                            <View style={{ paddingHorizontal: 10 }}>
+                                <Text>Localizar</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </View>
         );
     }
