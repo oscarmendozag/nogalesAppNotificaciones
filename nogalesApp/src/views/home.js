@@ -6,7 +6,7 @@ import firebase from 'react-native-firebase';
 import { getColonie } from '../commons';
 import { Colonies } from './colonie';
 import busIcon from '../assets/bus.png';
-import { Spinner } from 'native-base';
+import { Spinner, Icon } from 'native-base';
 
 // create a component
 class Home extends Component {
@@ -33,6 +33,7 @@ class Home extends Component {
     startTracking() {
         getColonie().then(
             value => {
+                alert(value);
                 if (value === null) {
                     this.setState({ showInitialConfiguration: true });
                 } else {
@@ -51,80 +52,81 @@ class Home extends Component {
                             this.setState({ fetching: false })
                         }
                     )
-            }
+                }
             }
         ).finally(
-                onfinally => {
-                    this.setState({ starting: false, fetching: false })
+            onfinally => {
+                this.setState({ starting: false, fetching: false })
             }
         );
     }
 
-componentWillUnmount() {
-    this.setState({ showInitialConfiguration: false })
-    this.unsubscribe();
-}
+    componentWillUnmount() {
+        this.setState({ showInitialConfiguration: false })
+        this.unsubscribe();
+    }
 
-render() {
-    if (this.state.starting) {
-        return (
-            <View style={styles.container}>
-                <Spinner></Spinner>
-                <Text>{this.state.fetching ? 'Buscando si ha salido autobús' : 'Comprobando configuración'} </Text>
-            </View>
-        )
-    } else {
-        if (this.state.showInitialConfiguration) {
-            return <Modal visible={this.state.showInitialConfiguration}>
-                <View style={{ flex: 1 }}>
-                    <Colonies onSetted={() => {
-                        this.setState({ showInitialConfiguration: false });
-                        this.startTracking();
-                        alert('Ahora recibirás notificaciones.')
-                    }}></Colonies>
-                </View>
-            </Modal>
-
-        }
-        if (this.state.fetching) {
+    render() {
+        if (this.state.starting) {
             return (
                 <View style={styles.container}>
                     <Spinner></Spinner>
-                    <Text>Buscando si ha salido autobús</Text>
+                    <Text>{this.state.fetching ? 'Buscando si ha salido autobús' : 'Comprobando configuración'} </Text>
                 </View>
             )
-        }
-        if (!this.state.busLocation) {
-            return <View>
-                <Text>
-                    Autobus no pasa por su colonia, sorry
-                    </Text>
-            </View>
-        }
-    }
-    return (
-        <View style={styles.container}>
-            <MapView
-                showsUserLocation={true}
-                provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-                style={styles.map}
-                ref={ref => this.map = ref}
-                initialRegion={{
-                    latitude: 18.8157483,
-                    longitude: -97.1640488,
-                    latitudeDelta: 0.015,
-                    longitudeDelta: 0.0121,
-                }}
+        } else {
+            if (this.state.showInitialConfiguration) {
+                return <Modal visible={this.state.showInitialConfiguration}>
+                    <View style={{ flex: 1 }}>
+                        <Colonies onSetted={() => {
+                            this.setState({ showInitialConfiguration: false });
+                            this.startTracking();
+                            alert('Ahora recibirás notificaciones.')
+                        }}></Colonies>
+                    </View>
+                </Modal>
 
-            >
-                {this.state.busLocation ? <Marker image={busIcon} coordinate={this.state.busLocation}></Marker> : null}
-            </MapView>
-            <Button onPress={() => {
-                this.map.fitToCoordinates([this.state.busLocation])
-            }} title='Ubícame'></Button>
-        </View>
-    );
-}
+            }
+            if (this.state.fetching) {
+                return (
+                    <View style={styles.container}>
+                        <Spinner></Spinner>
+                        <Text>Buscando si ha salido autobús</Text>
+                    </View>
+                )
+            }
+            if (!this.state.busLocation) {
+                return <View style={{justifyContent: 'center', flex: 1, alignItems:'center'}}>
+                    <Text>
+                        Autobús no ha salido hacia su colonia, Consulte el calendario o en el apartado de notificaciones.
+                    </Text>
+                    <Icon name='ios-refresh' onPress={() => { this.startTracking();}}></Icon>
+                </View>
+            }
+        }
+        return (
+            <View style={styles.container}>
+                <MapView
+                    showsUserLocation={true}
+                    provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+                    style={styles.map}
+                    ref={ref => this.map = ref}
+                    initialRegion={{
+                        latitude: 18.8157483,
+                        longitude: -97.1640488,
+                        latitudeDelta: 0.015,
+                        longitudeDelta: 0.0121,
+                    }}
+
+                >
+                    {this.state.busLocation ? <Marker image={busIcon} coordinate={this.state.busLocation}></Marker> : null}
+                </MapView>
+                <Button onPress={() => {
+                    this.map.fitToCoordinates([this.state.busLocation])
+                }} title='Ubícame'></Button>
+            </View>
+        );
+    }
 }
 
 const styles = StyleSheet.create({

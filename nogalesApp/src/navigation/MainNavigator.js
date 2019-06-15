@@ -2,7 +2,6 @@ import { createAppContainer, createBottomTabNavigator } from 'react-navigation';
 import { Home, Settings, Track } from '../views';
 import { Icon } from 'native-base';
 import { Item } from './menuItem';
-import {colors} from '../commons/colors';
 import React from 'react';
 
 const MainTabNavigator = createBottomTabNavigator({
@@ -26,7 +25,7 @@ const MainTabNavigator = createBottomTabNavigator({
             tabBarIcon: ({ tintColor, focused }) => (
                 <Icon
                   name={'md-calendar'}
-                  style={{ color: tintColor, fontSize: focused ? 22: 20  }}
+                  style={{ color: tintColor, fontSize: focused ? 24: 22  }}
                 />
             ),
             tabBarLabel: ({ tintColor }) => (
@@ -51,7 +50,11 @@ const MainTabNavigator = createBottomTabNavigator({
     }
 },{
     tabBarOptions:{
-        activeTintColor: colors.mainColor
+        style:{
+            backgroundColor:'#38393a'
+        },
+        activeTintColor: '#02aa5b',
+        inactiveTintColor: 'gray',
     }
 });
 
