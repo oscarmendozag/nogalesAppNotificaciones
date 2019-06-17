@@ -60,11 +60,12 @@ class Notifications extends Component {
         var show = false;
         return (
             <View style={styles.container}>
-                <TouchableOpacity onPress={() => { this.searchNotifications() }} style={{ backgroundColor: '#000', padding: 5, borderRadius: 2, elevation: 2, marginTop: 10 }}>
+                <TouchableOpacity onPress={() => { this.searchNotifications() }} style={{ backgroundColor: '#000', padding: 5, borderRadius: 2, elevation: 2 }}>
                     <Icon style={{ color: '#fff' }} name='ios-refresh'>
                     </Icon>
                 </TouchableOpacity>
                 <FlatList
+                    style={{flex:1}}
                     data={this.state.localNotifications}
                     renderItem={
                         ({ item }) => {
