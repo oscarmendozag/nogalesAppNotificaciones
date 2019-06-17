@@ -106,7 +106,7 @@ class Home extends Component {
             if (!this.state.busLocation) {
                 return <View style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
                     <Text>
-                        Autobús no ha salido hacia su colonia, Consulte el calendario o en el apartado de notificaciones.
+                        Autobús no ha salido hacia su {this.state.colonie}, Consulte el calendario o en el apartado de notificaciones.
                     </Text>
                     <Icon name='ios-refresh' onPress={() => { this.startTracking(); }}></Icon>
                 </View>

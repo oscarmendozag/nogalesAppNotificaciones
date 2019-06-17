@@ -7,7 +7,7 @@
  */
 
 import React, { Component } from 'react';
-import { Platform, StyleSheet, PermissionsAndroid, View } from 'react-native';
+import { Platform, StyleSheet, PermissionsAndroid, Alert } from 'react-native';
 import AppContainer from './src/navigation/MainNavigator';
 
 export default class App extends Component {

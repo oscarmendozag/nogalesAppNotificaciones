@@ -1,5 +1,5 @@
 import { createAppContainer, createBottomTabNavigator } from 'react-navigation';
-import { Home, Settings, Track } from '../views';
+import { Home, Notifications, Track } from '../views';
 import { Icon } from 'native-base';
 import { Item } from './menuItem';
 import React from 'react';
@@ -34,8 +34,8 @@ const MainTabNavigator = createBottomTabNavigator({
             
         }
     },
-    Settings: {
-        screen: Settings,
+    Notifications: {
+        screen: Notifications,
         navigationOptions:{
             tabBarIcon: ({ tintColor, focused }) => (
                 <Icon
