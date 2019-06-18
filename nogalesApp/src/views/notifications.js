@@ -19,6 +19,16 @@ class Notifications extends Component {
         this.renderTimes = 0;
     }
     componentDidMount() {
+        this.getNotifications();
+        
+    }
+
+    toLocalDate(timestamp) {
+        return new Date(timestamp);
+    }
+
+    getNotifications() {
+        this.setState({colonie: '', localNotifications: null});
         getColonie().then(
             value => {
                 if (value) {
@@ -28,11 +38,6 @@ class Notifications extends Component {
             }
         )
     }
-
-    toLocalDate(timestamp) {
-        return new Date(timestamp);
-    }
-
     searchNotifications() {
         var notificationsLocal = []
         firebase.firestore().collection('notifications').where('colonies', 'array-contains', this.state.colonie).orderBy('createdAt', 'desc').limit(10).get().then(
@@ -50,27 +55,27 @@ class Notifications extends Component {
     }
 
     render() {
-        if (!this.state.colonie) {
-            return <Spinner />
-        }
-        if (!this.state.localNotifications) {
-            return <Text>Fetching notifications</Text>
+        if (!this.state.colonie || !this.state.localNotifications) {
+            return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                <Spinner />
+                <Text>{ !this.state.colonie ? 'Buscando en configuraciones' : 'Buscando notificaciones' }</Text>
+            </View>
         }
         this.first = '';
         var show = false;
         return (
             <View style={styles.container}>
-                <TouchableOpacity onPress={() => { this.searchNotifications() }} style={{ backgroundColor: '#000', padding: 5, borderRadius: 2, elevation: 2 }}>
+                <TouchableOpacity onPress={() => { this.getNotifications() }} style={{ backgroundColor: '#000', padding: 5, borderRadius: 2, elevation: 2 }}>
                     <Icon style={{ color: '#fff' }} name='ios-refresh'>
                     </Icon>
                 </TouchableOpacity>
                 <FlatList
-                    style={{flex:1}}
+                    style={{ flex: 1 }}
                     data={this.state.localNotifications}
                     renderItem={
                         ({ item }) => {
                             show = this.first === item.createdAt ? false : (this.first = item.createdAt, true);
-                            return<NotificationItem showDate = {show} item ={item}/>
+                            return <NotificationItem showDate={show} item={item} />
                         }
                     }
                 ></FlatList>
