@@ -44,9 +44,9 @@ class Notifications extends Component {
             notifications => {
                 notifications.docs.map(
                     doc => {
-                        const { name, createdAt } = doc.data();
+                        const { type, createdAt } = doc.data();
                         const date = this.toLocalDate(createdAt);
-                        notificationsLocal.push({ name, createdAt: date.toLocaleDateString(), hour: date.toLocaleTimeString() })
+                        notificationsLocal.push({ name: type === 1 ? 'Autobús en camino a su colonia.': 'Servicio para el horario esperado, suspendido.', type ,createdAt: date.toLocaleDateString(), hour: date.toLocaleTimeString() })
                     }
                 );
                 this.setState({ localNotifications: notificationsLocal })

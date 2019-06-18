@@ -1,7 +1,7 @@
 //import liraries
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { ListItem, Left, Body, Right, Text } from 'native-base';
+import { ListItem, Left, Body, Right, Text, Icon } from 'native-base';
 
 // create a component
 const NotificationItem = (props) => {
@@ -23,7 +23,7 @@ const SimpleNotificationItem = (props) => {
     const item = props.item;
     return <ListItem avatar>
         <Left>
-            <Text></Text>
+            <Icon name = {'md-bus'} color={item.type === 1 ? 'green' : 'red'} style={{color: item.type === 1 ? 'green' : 'red', fontSize: 25}}/>
         </Left>
         <Body>
             <Text>{item.name}</Text>
