@@ -7,6 +7,7 @@ import { getColonie } from '../commons';
 import { Colonies } from './colonie';
 import busIcon from '../assets/bus.png';
 import { Spinner, Icon } from 'native-base';
+import { Header } from '../components';
 
 // create a component
 class Home extends Component {
@@ -27,19 +28,26 @@ class Home extends Component {
 
     onDocUpdate = (querySnapshot) => {
         const { latitud, longitud } = querySnapshot.data();
-        this.setState({ busLocation: { latitude: latitud, longitude: longitud } });
+        if (latitud && longitud) {
+            this.setState({ busLocation: { latitude: latitud, longitude: longitud } });
+            return;
+        }
+        this.setState({ busLocation: null });
+        return;
     }
 
     componentDidMount() {
         //this.firebaseRef = firebase.firestore().collection('zones').doc('sMhGAj5dyvZ7pFRORl4t');
         //this.unsubscribe = this.firebaseRef.onSnapshot(this.onDocUpdate);
         this.startTracking();
+
     }
 
-    changeTop(){
-        this.setState({marginTop: 0})
+    changeTop() {
+        this.setState({ marginTop: 0 })
     }
     startTracking() {
+        this.setState({fetching: true});
         getColonie().then(
             value => {
                 if (value === null) {
@@ -99,23 +107,25 @@ class Home extends Component {
                 return (
                     <View style={styles.container}>
                         <Spinner></Spinner>
-                        <Text>Buscando si ha salido autobús</Text>
+                        <Text>Buscando si ha su salido autobús.</Text>
                     </View>
                 )
             }
             if (!this.state.busLocation) {
-                return <View style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
+                return <View style={{ flex: 1, alignItems: 'center' }}>
+                    <Header title='Autobús'>
+                        <Icon style={{color:'#fff', fontSize: 28}} name='ios-refresh' onPress={() => { this.startTracking(); }}></Icon>
+                    </Header>
                     <Text>
-                        Autobús no ha salido hacia su {this.state.colonie}, Consulte el calendario o en el apartado de notificaciones.
+                        Autobús no ha salido hacia su colonia, Consulte el calendario o en el apartado de notificaciones.
                     </Text>
-                    <Icon name='ios-refresh' onPress={() => { this.startTracking(); }}></Icon>
                 </View>
             }
         }
 
 
         if (this.mapLoaded === 0) {
-            setTimeout(()=>this.setState({marginTop:0}), 1000)
+            setTimeout(() => this.setState({ marginTop: 0 }), 1000)
         }
         this.mapLoaded++;
         return (

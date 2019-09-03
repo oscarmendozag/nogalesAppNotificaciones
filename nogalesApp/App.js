@@ -7,48 +7,37 @@
  */
 
 import React, { Component } from 'react';
-import { Platform, StyleSheet, PermissionsAndroid, Alert } from 'react-native';
+import { Platform, StyleSheet, View, Alert } from 'react-native';
+import firebase, { Notification } from 'react-native-firebase';
 import AppContainer from './src/navigation/MainNavigator';
 
 export default class App extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      showNotificationModal: true
+    }
+  }
   componentDidMount() {
-    async function requestCameraPermission() {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, {
-            'title': 'AndoridPermissionExample App Camera Permission',
-            'message': 'AndoridPermissionExample App needs access to your camera '
-          }
-        )
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          //To Check, If Permission is granted
-          alert("You can use the CAMERA");
-        } else {
-          alert("CAMERA permission denied");
-        }
-      } catch (err) {
-        alert("err", err);
-        console.warn(err)
-      }
-    }
-    if (Platform.OS === 'android') {
-      //Calling the permission function
-      requestCameraPermission();
-    } else {
-      alert('IOS device found');
-    }
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        const location = JSON.stringify(position);
+    this.removeNotificationListener = firebase.notifications().onNotification((notification) => {
+      // Process your notification as required
+      // Works on both iOS and Android
+      Alert.alert(
+        'Bus en Camino',
+        'El autobús está en camino refresque en la sección encontrar para ver dónde viene.',
+        [
+          { text: 'Entendido!', onPress: () => console.log('Ask me later pressed') }
+        ],
+        { cancelable: false },
+      );
 
-        this.setState({ location });
-      },
-      error => Alert.alert(error.message),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-    );
+    });
   }
 
+  componentWillUnmount() {
+    this.removeNotificationListener();
+  }
   render() {
     return (
       <AppContainer />
@@ -56,21 +45,3 @@ export default class App extends Component {
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});

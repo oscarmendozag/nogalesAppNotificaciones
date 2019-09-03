@@ -1,25 +1,43 @@
 //import liraries
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TextInput } from 'react-native';
 import { colonies } from '../commons';
 import { setTopic } from '../functions';
-import { ListItem, Left, Body, Header, Title, Right } from 'native-base';
+import { ListItem, Icon, Body, Title, Right } from 'native-base';
+import {Header} from '../components';
 // create a component
 
 class Colonies extends Component {
 
+    constructor(props){
+        super(props);
+    }
+
+    componentDidMount(){
+        this.state={
+            colonies : [],
+            textInputSearch: ''
+        }
+    }
+
+    search(){
+        alert(this.state.textInputSearch);
+    }
     render() {
         return (
             <View style={styles.container}>
                 <Header
-                    style={{ backgroundColor: 'green' }}
-                    androidStatusBarColor={'#fff'}>
-                    <Left />
-                    <Body>
-                        <Title>Colonias</Title>
-                    </Body>
-                    <Right />
+                    title='Seleccione su colonia'>
+                        {this.props.isEditing ?  <Icon onPress={this.props.close} name='md-close' style={{color:'#fff'}}></Icon> : null}
                 </Header>
+                <TextInput
+                    onEndEditing={()=> this.search()}
+                    onChangeText= {text => {
+                        this.setState({textInputSearch: text})
+                    }}
+                    placeholder='Ingrese nombre de colonia'
+                    style={{borderBottomColor:'#000', borderBottomWidth: 1, marginHorizontal: 10, borderWidth: 1, borderRadius: 10, marginTop: 5}}
+                ></TextInput>
                 <FlatList
                     data={colonies}
                     renderItem={({ item }) => {

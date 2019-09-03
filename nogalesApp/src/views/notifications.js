@@ -6,6 +6,8 @@ import firebase, { notifications } from 'react-native-firebase';
 import { getColonie, NotificationItem } from '../commons';
 import { Icon, ListItem, Spinner } from 'native-base';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Header } from '../components';
+
 
 // create a component
 class Notifications extends Component {
@@ -20,7 +22,7 @@ class Notifications extends Component {
     }
     componentDidMount() {
         this.getNotifications();
-        
+
     }
 
     toLocalDate(timestamp) {
@@ -28,7 +30,7 @@ class Notifications extends Component {
     }
 
     getNotifications() {
-        this.setState({colonie: '', localNotifications: null});
+        this.setState({ colonie: '', localNotifications: null });
         getColonie().then(
             value => {
                 if (value) {
@@ -46,7 +48,7 @@ class Notifications extends Component {
                     doc => {
                         const { type, createdAt } = doc.data();
                         const date = this.toLocalDate(createdAt);
-                        notificationsLocal.push({ name: type === 1 ? 'Autobús en camino a su colonia.': 'Servicio para el horario esperado, suspendido.', type ,createdAt: date.toLocaleDateString(), hour: date.toLocaleTimeString() })
+                        notificationsLocal.push({ name: type === 1 ? 'Autobús en camino a su colonia.' : 'Servicio para el horario esperado, suspendido.', type, createdAt: date.toLocaleDateString(), hour: date.toLocaleTimeString() })
                     }
                 );
                 this.setState({ localNotifications: notificationsLocal })
@@ -58,17 +60,20 @@ class Notifications extends Component {
         if (!this.state.colonie || !this.state.localNotifications) {
             return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Spinner />
-                <Text>{ !this.state.colonie ? 'Buscando en configuraciones' : 'Buscando notificaciones' }</Text>
+                <Text>{!this.state.colonie ? 'Buscando en configuraciones' : 'Buscando notificaciones'}</Text>
             </View>
         }
         this.first = '';
         var show = false;
         return (
             <View style={styles.container}>
-                <TouchableOpacity onPress={() => { this.getNotifications() }} style={{ backgroundColor: '#000', padding: 5, borderRadius: 2, elevation: 2 }}>
-                    <Icon style={{ color: '#fff' }} name='ios-refresh'>
-                    </Icon>
-                </TouchableOpacity>
+                <Header title='Notificaciones'>
+                    <TouchableOpacity onPress={() => { this.getNotifications() }} >
+                        <Icon style={{ color: '#fff', fontSize: 28 }} name='ios-refresh'>
+                        </Icon>
+                    </TouchableOpacity>
+                </Header>
+
                 <FlatList
                     style={{ flex: 1 }}
                     data={this.state.localNotifications}
