@@ -2,44 +2,54 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, FlatList, TextInput } from 'react-native';
 import { colonies } from '../commons';
-import { setTopic } from '../functions';
+import { setTopic, wordSearch } from '../functions';
 import { ListItem, Icon, Body, Title, Right } from 'native-base';
-import {Header} from '../components';
+import { Header } from '../components';
 // create a component
 
 class Colonies extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
-    }
-
-    componentDidMount(){
-        this.state={
-            colonies : [],
+        this.state = {
+            colonies: colonies,
             textInputSearch: ''
         }
     }
 
-    search(){
-        alert(this.state.textInputSearch);
+    componentDidMount() {
+    }
+
+    search() {
+        let word = this.state.textInputSearch;
+        if (word === '') {
+            this.setState({ colonies: colonies });
+            return;
+        }
+        wordSearch(word).then(
+            res => {
+                this.setState({ colonies: res });
+            }
+        );
     }
     render() {
         return (
             <View style={styles.container}>
                 <Header
                     title='Seleccione su colonia'>
-                        {this.props.isEditing ?  <Icon onPress={this.props.close} name='md-close' style={{color:'#fff'}}></Icon> : null}
+                    {this.props.isEditing ? <Icon onPress={this.props.close} name='md-close' style={{ color: '#fff' }}></Icon> : null}
                 </Header>
                 <TextInput
-                    onEndEditing={()=> this.search()}
-                    onChangeText= {text => {
-                        this.setState({textInputSearch: text})
+                    onChangeText={text => {
+                        this.setState({ textInputSearch: text });
+                        this.search();
                     }}
                     placeholder='Ingrese nombre de colonia'
-                    style={{borderBottomColor:'#000', borderBottomWidth: 1, marginHorizontal: 10, borderWidth: 1, borderRadius: 10, marginTop: 5}}
+                    style={{ borderBottomColor: '#000', borderBottomWidth: 1, marginHorizontal: 10, borderWidth: 1, borderRadius: 10, marginTop: 5 }}
                 ></TextInput>
                 <FlatList
-                    data={colonies}
+                    data={this.state.colonies}
+                    //extraData={this.state.colonies}
                     renderItem={({ item }) => {
                         return (
                             <ListItem

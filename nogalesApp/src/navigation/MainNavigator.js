@@ -1,5 +1,5 @@
 import { createAppContainer, createBottomTabNavigator } from 'react-navigation';
-import { Home, Notifications, Track } from '../views';
+import { Home, Notifications, Track, Tips } from '../views';
 import { Icon } from 'native-base';
 import { Item } from './menuItem';
 import React from 'react';
@@ -29,7 +29,7 @@ const MainTabNavigator = createBottomTabNavigator({
                 />
             ),
             tabBarLabel: ({ tintColor }) => (
-                <Item tintColor={tintColor} title={'Calendario'} />
+                <Item tintColor={tintColor} title={'Horarios'} />
             )
             
         }
@@ -45,6 +45,20 @@ const MainTabNavigator = createBottomTabNavigator({
             ),
             tabBarLabel: ({ tintColor }) => (
                 <Item tintColor={tintColor} title={'Notificaciones'} />
+            )
+        }
+    },
+    Tips:{
+        screen: Tips,
+        navigationOptions:{
+            tabBarIcon: ({tintColor, focused}) => (
+                <Icon
+                    name={'ios-bulb'}
+                    style={{ color: tintColor, fontSize: focused ? 22: 20 }}
+                />
+            ),
+            tabBarLabel: ({tintColor}) => (
+                <Item tintColor={tintColor} title={'Tips'}/>
             )
         }
     }

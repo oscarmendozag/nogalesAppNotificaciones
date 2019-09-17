@@ -1,5 +1,5 @@
 var colors = {
-    mainColor: '#000'
+    mainColor: '#38393a'
 }
 
 export {colors};

@@ -7,3 +7,11 @@ export function setColonie(colonie){
 export function getColonie(){
     return AsyncStorage.getItem('colonie');
 }
+
+export function colonieUpdated(flag){
+    return AsyncStorage.setItem('isColonieUpdated', flag);
+}
+
+export function isColonieUpdated(){
+    return AsyncStorage.getItem('isColonieUpdated');
+}

@@ -3,12 +3,14 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import firebase from 'react-native-firebase';
-import { getColonie } from '../commons';
+import { getColonie, colors, isColonieUpdated, colonieUpdated } from '../commons';
 import { Colonies } from './colonie';
 import busIcon from '../assets/bus.png';
 import { Spinner, Icon } from 'native-base';
 import { Header } from '../components';
 
+const latitudeDelta = 0.015;
+const longitudeDelta = 0.0121;
 // create a component
 class Home extends Component {
 
@@ -29,7 +31,7 @@ class Home extends Component {
     onDocUpdate = (querySnapshot) => {
         const { latitud, longitud } = querySnapshot.data();
         if (latitud && longitud) {
-            this.setState({ busLocation: { latitude: latitud, longitude: longitud } });
+            this.setState({ busLocation: { latitude: latitud, longitude: longitud, longitudeDelta, latitudeDelta } });
             return;
         }
         this.setState({ busLocation: null });
@@ -37,17 +39,24 @@ class Home extends Component {
     }
 
     componentDidMount() {
-        //this.firebaseRef = firebase.firestore().collection('zones').doc('sMhGAj5dyvZ7pFRORl4t');
-        //this.unsubscribe = this.firebaseRef.onSnapshot(this.onDocUpdate);
         this.startTracking();
-
+        this.focusListener = this.props.navigation.addListener('didFocus', () => {
+            isColonieUpdated().then(
+                value => {
+                    if(value === "1"){
+                        colonieUpdated("0").then(val => {this.startTracking();});
+                    }
+                        
+                }
+            );
+        });
     }
 
     changeTop() {
         this.setState({ marginTop: 0 })
     }
     startTracking() {
-        this.setState({fetching: true});
+        this.setState({ fetching: true });
         getColonie().then(
             value => {
                 if (value === null) {
@@ -80,6 +89,7 @@ class Home extends Component {
     componentWillUnmount() {
         this.setState({ showInitialConfiguration: false })
         this.unsubscribe();
+        this.focusListener();
     }
 
     render() {
@@ -114,7 +124,7 @@ class Home extends Component {
             if (!this.state.busLocation) {
                 return <View style={{ flex: 1, alignItems: 'center' }}>
                     <Header title='Autobús'>
-                        <Icon style={{color:'#fff', fontSize: 28}} name='ios-refresh' onPress={() => { this.startTracking(); }}></Icon>
+                        <Icon style={{ color: '#fff', fontSize: 28 }} name='ios-refresh' onPress={() => { this.startTracking(); }}></Icon>
                     </Header>
                     <Text>
                         Autobús no ha salido hacia su colonia, Consulte el calendario o en el apartado de notificaciones.
@@ -132,7 +142,7 @@ class Home extends Component {
             <View style={[styles.container, { marginTop: this.state.marginTop }]}>
                 <MapView
                     showsUserLocation={true}
-                    provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+                    provider={PROVIDER_GOOGLE}
                     style={styles.map}
                     ref={ref => this.map = ref}
                     initialRegion={{
@@ -146,12 +156,13 @@ class Home extends Component {
                 </MapView>
                 <View style={{ position: 'absolute', top: 10, width: '100%', paddingHorizontal: 10 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <TouchableOpacity style={{ backgroundColor: 'rgba(255,255,255,.5)', padding: 5, elevation: 1, alignItems: 'center', flexDirection: 'row' }} onPress={() => {
-                            this.map.fitToCoordinates([this.state.busLocation])
+                        <TouchableOpacity style={{ backgroundColor: colors.mainColor, padding: 5, elevation: 1, alignItems: 'center', flexDirection: 'row'}} onPress={() => {
+                            this.map.animateToRegion(this.state.busLocation, 100);
+
                         }}>
-                            <Icon name='ios-bus' />
+                            <Icon style={{color:'#fff'}} name='ios-bus' />
                             <View style={{ paddingHorizontal: 10 }}>
-                                <Text>Localizar</Text>
+                                <Text style={{color: '#fff'}}>Localizar</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
