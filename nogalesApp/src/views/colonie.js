@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TextInput, Alert } from 'react-native';
 import { colonies } from '../commons';
 import { setTopic, wordSearch } from '../functions';
 import { ListItem, Icon, Body, Title, Right } from 'native-base';
@@ -55,11 +55,24 @@ class Colonies extends Component {
                             <ListItem
                                 avatar
                                 onPress={() => {
-                                    setTopic(item.topic).then(
-                                        this.props.onSetted
-                                    ).catch(
-                                        err => alert(err)
-                                    )
+                                    Alert.alert(
+                                        'Confirmación',
+                                        `¿Desea seleccionar ${item.name} como su colonia predeterminada?`,
+                                        [
+                                            {
+                                                text: 'Sí', onPress: () => {
+                                                    setTopic(item.topic).then(
+                                                        this.props.onSetted
+                                                    ).catch(
+                                                        err => alert(err)
+                                                    )
+                                                    Alert.alert('Éxito', 'Ha sido cambiado.', [{ text: 'Entendido' }]);
+                                                }
+                                            },
+                                            { text: 'No', onPress: () => console.log('Ask me later pressed') }
+                                        ],
+                                        { cancelable: false },
+                                    );
                                 }}
                             >
                                 <Body>

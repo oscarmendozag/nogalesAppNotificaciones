@@ -43,10 +43,10 @@ class Home extends Component {
         this.focusListener = this.props.navigation.addListener('didFocus', () => {
             isColonieUpdated().then(
                 value => {
-                    if(value === "1"){
-                        colonieUpdated("0").then(val => {this.startTracking();});
+                    if (value === "1") {
+                        colonieUpdated("0").then(val => { this.startTracking(); });
                     }
-                        
+
                 }
             );
         });
@@ -126,9 +126,13 @@ class Home extends Component {
                     <Header title='Autobús'>
                         <Icon style={{ color: '#fff', fontSize: 28 }} name='ios-refresh' onPress={() => { this.startTracking(); }}></Icon>
                     </Header>
-                    <Text>
-                        Autobús no ha salido hacia su colonia, Consulte el calendario o en el apartado de notificaciones.
-                    </Text>
+                    <View style={{flex: 1, alignItems:'center', justifyContent:'center', paddingHorizontal: 15}}>
+                        <Icon name='md-bus' style={{color:'gray', fontSize: 80}}>
+                        </Icon>
+                        <Text style={{fontSize:16, textAlign:'center'}}>
+                            El servicio de recolección no ha salido hacia su colonia. Consulte la sección de horarios o en el apartado de notificaciones.
+                        </Text>
+                    </View>
                 </View>
             }
         }
@@ -156,13 +160,13 @@ class Home extends Component {
                 </MapView>
                 <View style={{ position: 'absolute', top: 10, width: '100%', paddingHorizontal: 10 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <TouchableOpacity style={{ backgroundColor: colors.mainColor, padding: 5, elevation: 1, alignItems: 'center', flexDirection: 'row'}} onPress={() => {
+                        <TouchableOpacity style={{ backgroundColor: colors.mainColor, padding: 5, elevation: 1, alignItems: 'center', flexDirection: 'row' }} onPress={() => {
                             this.map.animateToRegion(this.state.busLocation, 100);
 
                         }}>
-                            <Icon style={{color:'#fff'}} name='ios-bus' />
+                            <Icon style={{ color: '#fff' }} name='ios-bus' />
                             <View style={{ paddingHorizontal: 10 }}>
-                                <Text style={{color: '#fff'}}>Localizar</Text>
+                                <Text style={{ color: '#fff' }}>Localizar</Text>
                             </View>
                         </TouchableOpacity>
                     </View>

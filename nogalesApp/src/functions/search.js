@@ -9,4 +9,10 @@ const wordSearch = (word) => new Promise((resolve, reject) => {
     return resolve(newData);
 });
 
-export { wordSearch };
+const getOne = (topic) => new Promise((resolve, reject) => {
+    return resolve(colonies.find(
+        (colonie) => (colonie.topic === topic)
+    ))
+});
+
+export { wordSearch, getOne };

@@ -16,7 +16,7 @@ class Notifications extends Component {
         super();
         this.state = {
             colonie: '',
-            localNotifications: null
+            localNotifications: []
         }
         this.renderTimes = 0;
     }
@@ -30,7 +30,6 @@ class Notifications extends Component {
     }
 
     getNotifications() {
-        this.setState({ colonie: '', localNotifications: null });
         getColonie().then(
             value => {
                 if (value) {
@@ -73,8 +72,9 @@ class Notifications extends Component {
                         </Icon>
                     </TouchableOpacity>
                 </Header>
-
-                <FlatList
+                {this.state.localNotifications.length === 0 ? <View style={{flex: 1, alignItems:'center', justifyContent:'center'}}>
+                    <Icon style={{fontSize: 100, color:'gray'}} name='md-notifications'></Icon>
+                    <Text>Aún no hay notificaciones para mostrar.</Text></View> :<FlatList
                     style={{ flex: 1 }}
                     data={this.state.localNotifications}
                     renderItem={
@@ -83,7 +83,7 @@ class Notifications extends Component {
                             return <NotificationItem showDate={show} item={item} />
                         }
                     }
-                ></FlatList>
+                ></FlatList>}
             </View>
         );
     }
