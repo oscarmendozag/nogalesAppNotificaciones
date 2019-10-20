@@ -1,5 +1,5 @@
 import { createAppContainer, createBottomTabNavigator } from 'react-navigation';
-import { Home, Notifications, Track, Tips } from '../views';
+import { Home, Notifications, Track, Tips, InfoScreen } from '../views';
 import { Icon } from 'native-base';
 import { Item } from './menuItem';
 import React from 'react';
@@ -44,7 +44,7 @@ const MainTabNavigator = createBottomTabNavigator({
                 />
             ),
             tabBarLabel: ({ tintColor }) => (
-                <Item tintColor={tintColor} title={'Notificaciones'} />
+                <Item tintColor={tintColor} title={'Alertas'} />
             )
         }
     },
@@ -59,6 +59,20 @@ const MainTabNavigator = createBottomTabNavigator({
             ),
             tabBarLabel: ({tintColor}) => (
                 <Item tintColor={tintColor} title={'Tips'}/>
+            )
+        }
+    },
+    Information:{
+        screen: InfoScreen,
+        navigationOptions:{
+            tabBarIcon: ({tintColor, focused}) => (
+                <Icon
+                    name={'md-information-circle'}
+                    style={{ color: tintColor, fontSize: focused ? 22: 20 }}
+                />
+            ),
+            tabBarLabel: ({tintColor}) => (
+                <Item tintColor={tintColor} title={'Info'}/>
             )
         }
     }

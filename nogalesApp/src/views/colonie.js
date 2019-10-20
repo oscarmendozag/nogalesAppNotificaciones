@@ -1,10 +1,11 @@
 //import liraries
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, FlatList, TextInput, Alert } from 'react-native';
-import { colonies } from '../commons';
+import { colonies, colonieUpdated } from '../commons';
 import { setTopic, wordSearch } from '../functions';
 import { ListItem, Icon, Body, Title, Right } from 'native-base';
 import { Header } from '../components';
+import { withNavigation } from 'react-navigation';
 // create a component
 
 class Colonies extends Component {
@@ -18,6 +19,7 @@ class Colonies extends Component {
     }
 
     componentDidMount() {
+
     }
 
     search() {
@@ -50,6 +52,7 @@ class Colonies extends Component {
                 <FlatList
                     data={this.state.colonies}
                     //extraData={this.state.colonies}
+                    keyExtractor={({ item, index }) => 'key' + index}
                     renderItem={({ item }) => {
                         return (
                             <ListItem
@@ -59,17 +62,18 @@ class Colonies extends Component {
                                         'Confirmación',
                                         `¿Desea seleccionar ${item.name} como su colonia predeterminada?`,
                                         [
+                                            { text: 'No', onPress: () => console.log('Ask me later pressed') },
                                             {
                                                 text: 'Sí', onPress: () => {
                                                     setTopic(item.topic).then(
                                                         this.props.onSetted
+
                                                     ).catch(
                                                         err => alert(err)
                                                     )
                                                     Alert.alert('Éxito', 'Ha sido cambiado.', [{ text: 'Entendido' }]);
                                                 }
-                                            },
-                                            { text: 'No', onPress: () => console.log('Ask me later pressed') }
+                                            }
                                         ],
                                         { cancelable: false },
                                     );

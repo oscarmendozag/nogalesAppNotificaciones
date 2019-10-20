@@ -72,6 +72,7 @@ class Track extends Component {
                 <FlatList
                     data={this.state.colonie.dates}
                     style={{ flex: 2, padding: 10, marginBottom: 1 }}
+                    keyExtractor = {({item, index}) => 'key'+index }
                     renderItem={({ item }) => <View style={{ borderWidth: .5, backgroundColor: '#fff', borderRadius: 5, borderColor: '#000', elevation: 2, marginVertical: 10, padding: 15 }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
                             <View>

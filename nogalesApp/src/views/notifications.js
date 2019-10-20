@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, FlatList, Button } from 'react-native';
 import { colors } from '../commons/colors';
 import firebase, { notifications } from 'react-native-firebase';
-import { getColonie, NotificationItem } from '../commons';
+import { getColonie, NotificationItem, isColonieUpdated } from '../commons';
 import { Icon, ListItem, Spinner } from 'native-base';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Header } from '../components';
@@ -16,11 +16,15 @@ class Notifications extends Component {
         super();
         this.state = {
             colonie: '',
-            localNotifications: []
+            localNotifications: [],
+            fetching: false
         }
         this.renderTimes = 0;
     }
     componentDidMount() {
+        this.focusListener = this.props.navigation.addListener('didFocus', () => {
+            this.getNotifications();
+        });
         this.getNotifications();
 
     }
@@ -40,23 +44,24 @@ class Notifications extends Component {
         )
     }
     searchNotifications() {
-        var notificationsLocal = []
+        var notificationsLocal = [];
+        this.setState({fetching: true});
         firebase.firestore().collection('notifications').where('colonies', 'array-contains', this.state.colonie).orderBy('createdAt', 'desc').limit(10).get().then(
             notifications => {
                 notifications.docs.map(
                     doc => {
                         const { type, createdAt } = doc.data();
                         const date = this.toLocalDate(createdAt);
-                        notificationsLocal.push({ name: type === 1 ? 'Autobús en camino a su colonia.' : 'Servicio para el horario esperado, suspendido.', type, createdAt: date.toLocaleDateString(), hour: date.toLocaleTimeString() })
+                        notificationsLocal.push({ type, createdAt: date.toLocaleDateString(), hour: date.toLocaleTimeString() })
                     }
                 );
-                this.setState({ localNotifications: notificationsLocal })
+                this.setState({ localNotifications: notificationsLocal, fetching: false })
             }
         )
     }
 
     render() {
-        if (!this.state.colonie || !this.state.localNotifications) {
+        if (!this.state.colonie || this.state.fetching) {
             return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Spinner />
                 <Text>{!this.state.colonie ? 'Buscando en configuraciones' : 'Buscando notificaciones'}</Text>
@@ -77,6 +82,7 @@ class Notifications extends Component {
                     <Text>Aún no hay notificaciones para mostrar.</Text></View> :<FlatList
                     style={{ flex: 1 }}
                     data={this.state.localNotifications}
+                    keyExtractor={({item, index}) => 'key'+index}
                     renderItem={
                         ({ item }) => {
                             show = this.first === item.createdAt ? false : (this.first = item.createdAt, true);
